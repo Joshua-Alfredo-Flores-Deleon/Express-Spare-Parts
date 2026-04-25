@@ -6,6 +6,7 @@ import Resenas from './pages/Resenas'
 import Inicio from './pages/Inicio'
 import Contactanos from './pages/Contactanos'
 import Registrarse from './pages/Registrarse'
+import Novedades from './pages/Novedades'
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/resenas" element={<Resenas />} />
         <Route path="/contactos" element={<Contactanos />} />
         <Route path="/registrarse" element={<Registrarse />} />
+        <Route path="/novedades" element={<Novedades />} />
       </Routes>
       <Footer />
     </BrowserRouter>
