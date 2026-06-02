@@ -1,10 +1,15 @@
 import {Schema, model} from "mongoose"
 
 const ventaSchema = new Schema({
-    name: {type: String},
-    phone : {type: String},
-    image : {type: String},
-    public_id : {type: String}
+    cartId: 
+    {type: mongoose.Schema.Types.ObjectId,
+       ref: "cart",},
+    delivery : 
+    {type: String},
+    paymentMethod : 
+    {type: String},
+    paymenStatua : 
+    {type: Boolean}
 }, {
     timestamps: true,
     strict: false

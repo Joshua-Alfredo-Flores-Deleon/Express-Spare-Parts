@@ -1,10 +1,9 @@
 import {Schema, model} from "mongoose"
 
 const finanzaSchema = new Schema({
-    name: {type: String},
-    phone : {type: String},
-    image : {type: String},
-    public_id : {type: String}
+    monthlyEarnings: {type: String},
+    monthlyLosses : {type: String},
+    monthlyPnl : {type: String}
 }, {
     timestamps: true,
     strict: false
