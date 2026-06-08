@@ -1,4 +1,6 @@
 import { useState } from "react";
+
+const API_URL = 'http://localhost:4000/api';
 import "bootstrap/dist/css/bootstrap.min.css";
 import imgLogo from "../assets/golo-removebg-preview 5.png";
 import imgVelo from "../assets/velo.png";
@@ -245,14 +247,43 @@ export default function Registrarse() {
     usuario: "",
     contrasena: "",
   });
+  const [enviando, setEnviando] = useState(false);
+  const [mensaje, setMensaje] = useState({ texto: '', tipo: '' });
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Registro enviado:", form);
+    setEnviando(true);
+    setMensaje({ texto: '', tipo: '' });
+    try {
+      const res = await fetch(`${API_URL}/customers`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          full_name: form.nombreCompleto,
+          email: form.email,
+          phone_number: form.telefono,
+          user: form.usuario,
+          password: form.contrasena,
+          status: true,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setMensaje({ texto: '¡Cuenta creada exitosamente! Ya puedes iniciar sesión.', tipo: 'exito' });
+        setForm({ nombreCompleto: '', email: '', telefono: '', usuario: '', contrasena: '' });
+      } else {
+        setMensaje({ texto: data.message || 'Error al crear la cuenta.', tipo: 'error' });
+      }
+    } catch {
+      setMensaje({ texto: 'No se pudo conectar con el servidor. Verifica tu conexión.', tipo: 'error' });
+    } finally {
+      setEnviando(false);
+    }
   };
 
   return (
@@ -350,8 +381,21 @@ export default function Registrarse() {
               />
             </div>
 
-            <button type="submit" style={styles.submitButton}>
-              Registrarse
+            {mensaje.texto && (
+              <p style={{
+                marginTop: '12px',
+                padding: '10px 14px',
+                borderRadius: '6px',
+                backgroundColor: mensaje.tipo === 'exito' ? '#d4edda' : '#f8d7da',
+                color: mensaje.tipo === 'exito' ? '#155724' : '#721c24',
+                fontSize: '14px',
+                textAlign: 'center',
+              }}>
+                {mensaje.texto}
+              </p>
+            )}
+            <button type="submit" disabled={enviando} style={styles.submitButton}>
+              {enviando ? 'Registrando...' : 'Registrarse'}
             </button>
           </form>
         </div>

@@ -1,24 +1,25 @@
 import { Schema, model } from "mongoose";
 
-const productsSchema = new Schema({
-    customerId: {
-       type: mongoose.Schema.Types.ObjectId,
-       ref: "customers",
+const historialSchema = new Schema({
+    id_cliente: {
+        type: Schema.Types.ObjectId,
+        ref: "Customer"
     },
-    customerId: {
-       type: mongoose.Schema.Types.ObjectId,
-       ref: "Ventas",
+    id_venta: {
+        type: Schema.Types.ObjectId,
+        ref: "Ventas"
     },
     date: {
-        type: Date
+        type: Date,
+        default: Date.now
     },
     status: {
-        type: Boolean
-    },
-    
+        type: String,
+        default: "Completado"
+    }
 }, {
     timestamps: true,
     strict: false
 })
 
-export default model("products", productsSchema)
+export default model("Historial", historialSchema)

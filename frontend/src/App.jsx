@@ -7,6 +7,7 @@ import Inicio from './pages/Inicio'
 import Contactanos from './pages/Contactanos'
 import Registrarse from './pages/Registrarse'
 import Novedades from './pages/Novedades'
+import Historial from './pages/Historial'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/contactos" element={<Contactanos />} />
         <Route path="/registrarse" element={<Registrarse />} />
         <Route path="/novedades" element={<Novedades />} />
+        <Route path="/historial" element={<Historial />} />
       </Routes>
       <Footer />
     </BrowserRouter>

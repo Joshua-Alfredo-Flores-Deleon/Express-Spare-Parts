@@ -2,6 +2,11 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
+// Routers
+import customersRouter from "./src/routers/customers.js";
+import reviewsRouter from "./src/routers/reviews.js";
+import historialRouter from "./src/routers/historial.js";
+
 const app = express();
 
 app.use(
@@ -12,11 +17,14 @@ app.use(
   }),
 );
 
-app.use(limiter)
-
 app.use(cookieParser());
 
 //Que acepte los json desde postman
 app.use(express.json());
+
+// Rutas
+app.use("/api/customers", customersRouter);
+app.use("/api/reviews", reviewsRouter);
+app.use("/api/historial", historialRouter);
 
 export default app;

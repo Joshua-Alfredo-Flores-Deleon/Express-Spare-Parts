@@ -1,27 +1,28 @@
 import { Schema, model } from "mongoose";
 
 const customerSchema = new Schema({
-    name:{
+    full_name: {
         type: String
     },
     email: {
         type: String
     },
-    phone: {
+    phone_number: {
         type: String
-    }, 
+    },
     user: {
         type: String
     },
-    password : {
+    password: {
         type: String
     },
     status: {
-        type: Boolean
+        type: Boolean,
+        default: true
     }
 }, {
     timestamps: true,
     strict: false
 })
 
-export default model("customers", customerSchema)
+export default model("Customer", customerSchema)
