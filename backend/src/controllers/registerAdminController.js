@@ -116,14 +116,11 @@ registerAdminController.verifyCode = async (req, res) => {
 
     //Si todo está bien, y el usuario escribe el código, lo registramos en la BD
     const NewAdmin = new adminModel({
-      name, 
-      email, 
-      phone, 
-      hireDate, 
-      birthday, 
+      name,
+      email,
+      phone,
       user,
       password,
-      status,
       isVerified: true,
     });
 
