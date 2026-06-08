@@ -56,15 +56,20 @@ historialController.getHistorialById = async (req, res) => {
 
 historialController.createHistorial = async (req, res) => {
   try {
-    const { id_cliente, id_venta, date, status } = req.body;
+    const { id_cliente, id_venta, customerId, ventaId, date, status } = req.body;
 
-    if (!id_cliente || !id_venta) {
-      return res.status(400).json({ message: "Fields id_cliente and id_venta are required" });
+    const cliente = id_cliente || customerId;
+    const venta = id_venta || ventaId;
+
+    if (!cliente || !venta) {
+      return res.status(400).json({ message: "Fields id_cliente/customerId and id_venta/ventaId are required" });
     }
 
     const newRecord = new historialModel({
-      id_cliente,
-      id_venta,
+      id_cliente: cliente,
+      id_venta: venta,
+      customerId: cliente,
+      ventaId: venta,
       date: date || new Date(),
       status: status || "Completado",
     });
@@ -77,14 +82,23 @@ historialController.createHistorial = async (req, res) => {
   }
 };
 
+// Alias por compatibilidad
+historialController.insertHistorial = historialController.createHistorial;
+
 // PUT - Actualizar estado del historial
 historialController.updateHistorial = async (req, res) => {
   try {
-    const { status } = req.body;
+    const { status, customerId, ventaId, date } = req.body;
+
+    const updateData = {};
+    if (status) updateData.status = status;
+    if (customerId) updateData.customerId = customerId;
+    if (ventaId) updateData.ventaId = ventaId;
+    if (date) updateData.date = date;
 
     const recordUpdated = await historialModel.findByIdAndUpdate(
       req.params.id,
-      { status },
+      updateData,
       { new: true }
     );
 
@@ -108,6 +122,20 @@ historialController.deleteHistorial = async (req, res) => {
     }
 
     return res.status(200).json({ message: "Historial record deleted successfully" });
+  } catch (error) {
+    console.log("error " + error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// select con filtro por rango de precio (por compatibilidad si alguien lo llama)
+historialController.getHistoralByPriceRange = async (req, res) => {
+  try {
+    const { min, max } = req.body;
+    const historial = await historialModel.find({
+      price: { $gte: min, $lte: max }
+    });
+    return res.status(200).json(historial);
   } catch (error) {
     console.log("error " + error);
     return res.status(500).json({ message: "Internal server error" });

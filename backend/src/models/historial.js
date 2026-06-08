@@ -9,6 +9,15 @@ const historialSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Ventas"
     },
+    // Mantener los campos anteriores por compatibilidad
+    customerId: {
+        type: Schema.Types.ObjectId,
+        ref: "Customer"
+    },
+    ventaId: {
+        type: Schema.Types.ObjectId,
+        ref: "Ventas"
+    },
     date: {
         type: Date,
         default: Date.now
