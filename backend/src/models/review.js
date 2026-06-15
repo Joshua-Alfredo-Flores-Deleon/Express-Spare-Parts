@@ -14,7 +14,7 @@ const historialSchema = new Schema({
         type: String
     },
     customerId: {
-       type: mongoose.Schema.Types.ObjectId,
+       type: Schema.Types.ObjectId,
        ref: "customers",
     },
     status: {

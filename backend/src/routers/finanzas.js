@@ -5,7 +5,7 @@ const router = express.Router();
 
 router
   .route("/")
-  .get(finanzaController.getAllFinanzas)
+  .get(finanzaController.getFinanza)
   .post(finanzaController.insertFinanza);
 
 router

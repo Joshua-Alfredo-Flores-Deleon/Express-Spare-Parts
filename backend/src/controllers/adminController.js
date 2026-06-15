@@ -42,7 +42,7 @@ adminController.updateAdmin = async (req, res) => {
     }
 
     //validación de fechas
-    if (birthdate > new Date() || birthdate < new Date("1901-01-01")) {
+    if (birthday > new Date() || birthday < new Date("1901-01-01")) {
       return res.status(400).json({ message: "invalid date" });
     }
 
@@ -78,7 +78,7 @@ adminController.updateAdmin = async (req, res) => {
 //ELIMINAR
 adminController.deleteAdmin = async (req, res) => {
   try {
-    const deleteAdmin = adminModel.findByIdAndDelete(req.params.id);
+    const deleteAdmin = await adminModel.findByIdAndDelete(req.params.id);
 
     //Si no se elimina es por que no encontró el id
     if (!deleteAdmin) {

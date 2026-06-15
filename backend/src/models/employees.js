@@ -1,6 +1,6 @@
-   import { Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 
-const adminSchema = new Schema({
+const employeeSchema = new Schema({
     name:{
         type: String
     },
@@ -18,7 +18,7 @@ const adminSchema = new Schema({
     },
     rol: {
         type: String
-    }, 
+    },
     user: {
         type: String
     },
@@ -33,4 +33,4 @@ const adminSchema = new Schema({
     strict: false
 })
 
-export default model("admin", adminSchema)
+export default model("Employee", employeeSchema)

@@ -22,7 +22,7 @@ const productsSchema = new Schema({
         type: String
     },
     supplider_id: {
-       type: mongoose.Schema.Types.ObjectId,
+       type: Schema.Types.ObjectId,
        ref: "supplider",
     }
 }, {

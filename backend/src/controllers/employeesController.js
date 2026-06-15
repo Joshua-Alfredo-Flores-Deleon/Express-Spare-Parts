@@ -19,14 +19,15 @@ employeerModelController.updateEmployeer = async (req, res) => {
   try {
     //#1- solicitamos los nuevos datos
     let {
-      email, 
-        phone, 
-        hireDate, 
-        birthday, 
-        rol, 
-        user,
-        password,
-        status,
+      name,
+      email,
+      phone,
+      hireDate,
+      birthday,
+      rol,
+      user,
+      password,
+      status,
       isVerified,
       loginAttemps,
       timeOut,
@@ -42,7 +43,7 @@ employeerModelController.updateEmployeer = async (req, res) => {
     }
 
     //validación de fechas
-    if (birthdate > new Date() || birthdate < new Date("1901-01-01")) {
+    if (birthday > new Date() || birthday < new Date("1901-01-01")) {
       return res.status(400).json({ message: "invalid date" });
     }
 
@@ -78,7 +79,7 @@ employeerModelController.updateEmployeer = async (req, res) => {
 //ELIMINAR
 employeerModelController.deleteEmployeer = async (req, res) => {
   try {
-    const deleteEmployeer = employeerModel.findByIdAndDelete(req.params.id);
+    const deleteEmployeer = await employeerModel.findByIdAndDelete(req.params.id);
 
     //Si no se elimina es por que no encontró el id
     if (!deleteEmployeer) {

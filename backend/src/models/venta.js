@@ -1,8 +1,8 @@
 import {Schema, model} from "mongoose"
 
 const ventaSchema = new Schema({
-    cartId: 
-    {type: mongoose.Schema.Types.ObjectId,
+    cartId:
+    {type: Schema.Types.ObjectId,
        ref: "cart",},
     delivery : 
     {type: String},

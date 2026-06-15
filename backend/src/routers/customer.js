@@ -6,7 +6,7 @@ import customerController from "../controllers/customerController.js";
 const router = express.Router();
 
 router.route("/")
-    .get(customerController.getCustomer);
+    .get(customerController.getCustomers);
 
 router.route("/:id")
   .put(customerController.updateCustomer)
