@@ -8,6 +8,7 @@ import Contactanos from './pages/Contactanos'
 import Registrarse from './pages/Registrarse'
 import Novedades from './pages/Novedades'
 import Historial from './pages/Historial'
+import SobreNosotros from './pages/sobreNosotros'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Inicio />} />
         <Route path="/carrito" element={<Carrito />} />
+        <Route path='/sobreNosotros' element={<SobreNosotros />} />
         <Route path="/resenas" element={<Resenas />} />
         <Route path="/contactos" element={<Contactanos />} />
         <Route path="/registrarse" element={<Registrarse />} />

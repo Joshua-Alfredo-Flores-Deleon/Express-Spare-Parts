@@ -49,10 +49,11 @@ function Navbar() {
       }}>
         <Link to="/" style={linkStyle}>Inicio</Link>
         <Link to="/productos" style={linkStyle}>Productos</Link>
-        <Link to="/sobre-nosotros" style={linkStyle}>Sobre Nosotros</Link>
+        <Link to="/sobreNosotros" style={linkStyle}>Sobre Nosotros</Link>
         <Link to="/contactos" style={linkStyle}>Contactos</Link>
         <Link to="/resenas" style={linkStyle}>Reseñas</Link>
         <Link to="/novedades" style={linkStyle}>Novedades</Link>
+        <Link to="/historial" style={linkStyle}>Historial</Link>
         <Link to="/registrarse" style={linkStyle}>Registrarse</Link>
       </div>
     </>
