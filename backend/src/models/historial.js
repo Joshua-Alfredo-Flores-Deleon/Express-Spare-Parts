@@ -1,22 +1,9 @@
-import { Schema, model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
 const historialSchema = new Schema({
-    id_cliente: {
-        type: Schema.Types.ObjectId,
-        ref: "Customer"
-    },
     id_venta: {
-        type: Schema.Types.ObjectId,
-        ref: "Ventas"
-    },
-    // Mantener los campos anteriores por compatibilidad
-    customerId: {
-        type: Schema.Types.ObjectId,
-        ref: "Customer"
-    },
-    ventaId: {
-        type: Schema.Types.ObjectId,
-        ref: "Ventas"
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Venta"
     },
     date: {
         type: Date,

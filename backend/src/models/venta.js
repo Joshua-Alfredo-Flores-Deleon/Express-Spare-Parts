@@ -15,4 +15,4 @@ const ventaSchema = new Schema({
     strict: false
 })
 
-export default model ("Ventas", ventaSchema)
+export default model ("Venta", ventaSchema ,"Venta")
