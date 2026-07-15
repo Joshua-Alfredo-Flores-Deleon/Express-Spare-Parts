@@ -1,99 +1,111 @@
-import { useEffect } from "react";
-import { useResource } from "../hooks/useAppContext";
+import { FiEdit2, FiTrash2 } from 'react-icons/fi'
 
-const ESTADO_STYLES = {
-  Disponible: "bg-green-100 text-green-700",
-  Agotado: "bg-red-100 text-red-600",
-  "Stock bajo": "bg-yellow-100 text-yellow-700",
-};
-
-export default function ListadoProductos() {
-  const { filteredItems, loading, error, search, setSearch, fetchItems, openModal } =
-    useResource("productos");
-
-  useEffect(() => {
-    fetchItems();
-  }, []);
-
-  return (
-    <section className="bg-white rounded-lg shadow-md max-w-5xl mx-auto p-6">
-      <div className="flex items-center gap-4 mb-6">
-        <button
-          onClick={() => openModal()}
-          className="bg-[#0b1f4d] text-white text-sm font-semibold px-6 py-2 rounded-md hover:bg-[#0f2a66]"
-        >
-          Agregar
-        </button>
-        <div className="relative flex-1">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar producto"
-            className="w-full border border-gray-300 rounded-full py-2 px-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#0b1f4d]"
-          />
-          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
-        </div>
-      </div>
-
-      {loading && <p className="text-center text-gray-500 py-6">Cargando productos...</p>}
-      {error && <p className="text-center text-red-500 py-6">{error}</p>}
-
-      {!loading && !error && (
-        <table className="w-full text-sm text-left border-collapse">
-          <thead>
-            <tr className="text-gray-500 border-b">
-              <th className="py-2 font-medium">Producto</th>
-              <th className="py-2 font-medium">Precio</th>
-              <th className="py-2 font-medium">Estado de inventario</th>
-              <th className="py-2 font-medium">Cantidad</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredItems.length === 0 && (
-              <tr>
-                <td colSpan={4} className="py-6 text-center text-gray-400">
-                  No hay productos que coincidan con la búsqueda.
-                </td>
-              </tr>
-            )}
-            {filteredItems.map((producto) => (
-              <tr
-                key={producto.id}
-                className="border-b last:border-none cursor-pointer hover:bg-gray-50"
-                onClick={() => openModal(producto)}
-              >
-                <td className="py-3">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={producto.urlImagen || "/placeholder-product.png"}
-                      alt={producto.nombre}
-                      className="w-10 h-10 rounded object-cover bg-gray-100"
-                    />
-                    <div>
-                      <p className="font-semibold">{producto.nombre}</p>
-                      <p className="text-gray-400 text-xs line-clamp-1">
-                        {producto.descripcion}
-                      </p>
-                    </div>
-                  </div>
-                </td>
-                <td className="py-3 text-gray-600">${producto.precio}</td>
-                <td className="py-3">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                      ESTADO_STYLES[producto.estadoInventario] ?? "bg-gray-100 text-gray-600"
-                    }`}
-                  >
-                    {producto.estadoInventario}
-                  </span>
-                </td>
-                <td className="py-3 text-gray-600">{producto.stock}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </section>
-  );
+function getStockLevel(stock) {
+  if (stock === 0) return 'empty'
+  if (stock <= 5) return 'low'
+  if (stock <= 20) return 'medium'
+  return 'high'
 }
+
+function getStockBars(stock) {
+  const level = getStockLevel(stock)
+  let filledCount = 0
+  if (stock === 0) filledCount = 0
+  else if (stock <= 5) filledCount = 1
+  else if (stock <= 20) filledCount = 2
+  else filledCount = 3
+
+  return Array.from({ length: 3 }, (_, i) => (
+    <div
+      key={i}
+      className={`stock-bar ${i < filledCount ? `filled ${level}` : ''}`}
+    />
+  ))
+}
+
+function ListadoProductos({ products, onEdit, onDelete }) {
+  return (
+    <table className="data-table" id="products-table">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Descripción Técnica</th>
+          <th>Precio</th>
+          <th>Nivel de Stock</th>
+          <th>ID Proveedor</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {!products || products.length === 0 ? (
+          <tr>
+            <td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>
+              No hay productos registrados
+            </td>
+          </tr>
+        ) : products.map((product) => {
+          const level = getStockLevel(product.stock || 0)
+          return (
+            <tr key={product._id}>
+              <td>
+                <div className="product-cell">
+                  {product.image ? (
+                    <img src={product.image} alt={product.name} className="product-thumb" />
+                  ) : (
+                    <div className="product-thumb" style={{ 
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '18px', color: '#9CA3AF'
+                    }}>
+                      📦
+                    </div>
+                  )}
+                  <div className="product-info">
+                    <h4>{product.name}</h4>
+                    <span className="sku">SKU: {product._id?.slice(-6).toUpperCase()}</span>
+                  </div>
+                </div>
+              </td>
+              <td>{product.description ? product.description.substring(0, 40) + (product.description.length > 40 ? '...' : '') : '—'}</td>
+              <td>${Number(product.price || 0).toFixed(2)}</td>
+              <td>
+                <div className="stock-badge">
+                  <span className={`stock-count ${level}`}>
+                    {product.stock || 0}
+                    <br />
+                    <small style={{ fontSize: '9px', fontWeight: 500 }}>UNIDADES</small>
+                  </span>
+                  <div className="stock-bars">
+                    {getStockBars(product.stock || 0)}
+                  </div>
+                </div>
+              </td>
+              <td>{product.supplider_id ? product.supplider_id.toString().slice(-6).toUpperCase() : '—'}</td>
+              <td>
+                <div className="actions-cell">
+                  <button
+                    className="btn-action edit"
+                    onClick={() => onEdit(product)}
+                    title="Editar"
+                    id={`edit-product-${product._id}`}
+                  >
+                    <FiEdit2 />
+                  </button>
+                  <button
+                    className="btn-action delete"
+                    onClick={() => onDelete(product._id)}
+                    title="Eliminar"
+                    id={`delete-product-${product._id}`}
+                  >
+                    <FiTrash2 />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          )
+        })}
+      </tbody>
+    </table>
+  )
+}
+
+export default ListadoProductos

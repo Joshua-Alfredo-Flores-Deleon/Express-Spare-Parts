@@ -1,161 +1,134 @@
-import { createContext, useCallback, useMemo, useReducer } from "react";
+import { useState, useEffect } from 'react'
 
+function FormProductos({ product, onSave, onClose }) {
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    price: '',
+    stock: '',
+    supplider_id: ''
+  })
+  const [errorMsg, setErrorMsg] = useState('')
 
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:4000/api";
-
-const initialState = {
-  items: {},
-  loading: {},
-  error: {},
-  search: {},
-  modal: {
-    resource: null,
-    open: false,
-    record: null,
-  },
-};
-
-function reducer(state, action) {
-  switch (action.type) {
-    case "SET_LOADING":
-      return {
-        ...state,
-        loading: { ...state.loading, [action.resource]: action.value },
-      };
-    case "SET_ERROR":
-      return {
-        ...state,
-        error: { ...state.error, [action.resource]: action.value },
-      };
-    case "SET_ITEMS":
-      return {
-        ...state,
-        items: { ...state.items, [action.resource]: action.payload },
-      };
-    case "ADD_ITEM":
-      return {
-        ...state,
-        items: {
-          ...state.items,
-          [action.resource]: [
-            action.payload,
-            ...(state.items[action.resource] ?? []),
-          ],
-        },
-      };
-    case "UPDATE_ITEM":
-      return {
-        ...state,
-        items: {
-          ...state.items,
-          [action.resource]: (state.items[action.resource] ?? []).map((it) =>
-            it.id === action.payload.id ? action.payload : it
-          ),
-        },
-      };
-    case "REMOVE_ITEM":
-      return {
-        ...state,
-        items: {
-          ...state.items,
-          [action.resource]: (state.items[action.resource] ?? []).filter(
-            (it) => it.id !== action.id
-          ),
-        },
-      };
-    case "SET_SEARCH":
-      return {
-        ...state,
-        search: { ...state.search, [action.resource]: action.value },
-      };
-    case "OPEN_MODAL":
-      return {
-        ...state,
-        modal: { resource: action.resource, open: true, record: action.record ?? null },
-      };
-    case "CLOSE_MODAL":
-      return {
-        ...state,
-        modal: { resource: null, open: false, record: null },
-      };
-    default:
-      return state;
-  }
-}
-
-export const AppContext = createContext(null);
-
-export function AppProvider({ children }) {
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  const fetchItems = useCallback(async (resource) => {
-    dispatch({ type: "SET_LOADING", resource, value: true });
-    dispatch({ type: "SET_ERROR", resource, value: null });
-    try {
-      const res = await fetch(`${API_BASE_URL}/${resource}`);
-      if (!res.ok) throw new Error(`No se pudo cargar ${resource}`);
-      const data = await res.json();
-      dispatch({ type: "SET_ITEMS", resource, payload: data });
-    } catch (err) {
-      dispatch({ type: "SET_ERROR", resource, value: err.message });
-    } finally {
-      dispatch({ type: "SET_LOADING", resource, value: false });
+  useEffect(() => {
+    if (product) {
+      setFormData({
+        name: product.name || '',
+        description: product.description || '',
+        price: product.price || '',
+        stock: product.stock || '',
+        supplider_id: product.supplider_id || ''
+      })
     }
-  }, []);
+  }, [product])
 
-  const createItem = useCallback(async (resource, values) => {
-    const res = await fetch(`${API_BASE_URL}/${resource}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values),
-    });
-    if (!res.ok) throw new Error(`No se pudo crear el registro en ${resource}`);
-    const created = await res.json();
-    dispatch({ type: "ADD_ITEM", resource, payload: created });
-    return created;
-  }, []);
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value })
+  }
 
-  const updateItem = useCallback(async (resource, id, values) => {
-    const res = await fetch(`${API_BASE_URL}/${resource}/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values),
-    });
-    if (!res.ok) throw new Error(`No se pudo actualizar el registro en ${resource}`);
-    const updated = await res.json();
-    dispatch({ type: "UPDATE_ITEM", resource, payload: updated });
-    return updated;
-  }, []);
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    setErrorMsg('')
+    
+    if (formData.name.trim().length < 3) {
+      setErrorMsg('El nombre del producto debe tener al menos 3 caracteres.')
+      return
+    }
+    if (Number(formData.price) <= 0) {
+      setErrorMsg('El precio debe ser un número mayor a 0.')
+      return
+    }
+    if (Number(formData.stock) < 0 || !Number.isInteger(Number(formData.stock))) {
+      setErrorMsg('El stock debe ser un número entero válido (0 o más).')
+      return
+    }
+    if (!formData.supplider_id.trim()) {
+      setErrorMsg('El ID del proveedor es requerido.')
+      return
+    }
 
-  const removeItem = useCallback(async (resource, id) => {
-    const res = await fetch(`${API_BASE_URL}/${resource}/${id}`, { method: "DELETE" });
-    if (!res.ok) throw new Error(`No se pudo eliminar el registro en ${resource}`);
-    dispatch({ type: "REMOVE_ITEM", resource, id });
-  }, []);
+    onSave(formData)
+  }
 
-  const setSearch = useCallback((resource, value) => {
-    dispatch({ type: "SET_SEARCH", resource, value });
-  }, []);
-
-  const openModal = useCallback((resource, record = null) => {
-    dispatch({ type: "OPEN_MODAL", resource, record });
-  }, []);
-
-  const closeModal = useCallback(() => dispatch({ type: "CLOSE_MODAL" }), []);
-
-  const value = useMemo(
-    () => ({
-      state,
-      fetchItems,
-      createItem,
-      updateItem,
-      removeItem,
-      setSearch,
-      openModal,
-      closeModal,
-    }),
-    [state, fetchItems, createItem, updateItem, removeItem, setSearch, openModal, closeModal]
-  );
-
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <h2>{product ? 'Editar Producto' : 'Agregar Producto'}</h2>
+        {errorMsg && <div style={{ color: '#d32f2f', backgroundColor: '#ffebee', padding: '10px', borderRadius: '4px', marginBottom: '15px' }}>{errorMsg}</div>}
+        <form onSubmit={handleSubmit} noValidate>
+          <div className="form-group">
+            <label htmlFor="name">Nombre</label>
+            <input
+              id="name"
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Nombre del producto"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="description">Descripción</label>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="Descripción técnica"
+              rows="3"
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="price">Precio ($)</label>
+            <input
+              id="price"
+              type="number"
+              name="price"
+              value={formData.price}
+              onChange={handleChange}
+              placeholder="0.00"
+              step="0.01"
+              min="0"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="stock">Stock</label>
+            <input
+              id="stock"
+              type="number"
+              name="stock"
+              value={formData.stock}
+              onChange={handleChange}
+              placeholder="0"
+              min="0"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="supplider_id">ID Proveedor</label>
+            <input
+              id="supplider_id"
+              type="text"
+              name="supplider_id"
+              value={formData.supplider_id}
+              onChange={handleChange}
+              placeholder="ID del proveedor"
+            />
+          </div>
+          <div className="form-actions">
+            <button type="button" className="btn-secondary" onClick={onClose}>
+              Cancelar
+            </button>
+            <button type="submit" className="btn-primary">
+              {product ? 'Actualizar' : 'Guardar'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
 }
+
+export default FormProductos

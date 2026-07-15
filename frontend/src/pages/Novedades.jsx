@@ -1,8 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import imgPromo from "../assets/Promoción.png";
-import img1 from "../assets/1.png";
-import img2 from "../assets/2.png";
+import axios from "axios";
 
 const styles = {
   pageContainer: {
@@ -112,45 +110,22 @@ const styles = {
   },
 };
 
-const carouselImages = [
-  imgPromo,
-  img1,
-  img2,
-];
+const API = 'http://localhost:4000/api';
 
-const ofertas = [
-  {
-    id: 1,
-    imagen: img1,
-    titulo: "Compra 1 y llévate el otro con 20%",
-    descripcion: "Aprovecha nuestra promoción especial en repuestos seleccionados. Válido hasta fin de mes.",
-  },
-  {
-    id: 2,
-    imagen: img2,
-    titulo: "Cambio de Frenos",
-    descripcion: "Realiza tu segunda compra con nosotros y obtén un descuento especial en cambio de frenos.",
-  },
-  {
-    id: 3,
-    imagen: imgPromo,
-    titulo: "Consulta nuestros mejores repuestos",
-    descripcion: "Contáctanos al 6245-1425 para obtener asesoría personalizada sobre los mejores repuestos para tu vehículo.",
-  },
-];
-
-function Carousel() {
+function Carousel({ images }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  if (!images || images.length === 0) return null;
 
   const nextSlide = () => {
     setCurrentIndex((prevIndex) => 
-      prevIndex === carouselImages.length - 1 ? 0 : prevIndex + 1
+      prevIndex === images.length - 1 ? 0 : prevIndex + 1
     );
   };
 
   const prevSlide = () => {
     setCurrentIndex((prevIndex) => 
-      prevIndex === 0 ? carouselImages.length - 1 : prevIndex - 1
+      prevIndex === 0 ? images.length - 1 : prevIndex - 1
     );
   };
 
@@ -170,7 +145,7 @@ function Carousel() {
       </button>
 
       <img
-        src={carouselImages[currentIndex]}
+        src={images[currentIndex]}
         alt={`Oferta ${currentIndex + 1}`}
         style={styles.carouselImage}
       />
@@ -185,7 +160,7 @@ function Carousel() {
       </button>
 
       <div style={styles.dotsContainer}>
-        {carouselImages.map((_, index) => (
+        {images.map((_, index) => (
           <div
             key={index}
             style={{
@@ -225,6 +200,26 @@ function OfertaCard({ oferta }) {
 }
 
 export default function Novedades() {
+  const [promociones, setPromociones] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPromociones = async () => {
+      try {
+        const res = await axios.get(`${API}/promocion`);
+        setPromociones(res.data);
+      } catch (error) {
+        console.error("Error fetching promociones:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPromociones();
+  }, []);
+
+  const activePromos = promociones.filter(p => p.status);
+  const carouselImages = activePromos.map(p => p.imagen).filter(Boolean);
+
   return (
     <div style={styles.pageContainer}>
       <div style={styles.header}>
@@ -235,13 +230,20 @@ export default function Novedades() {
 
       <h2 style={styles.sectionTitle}>Nuestras mejores ofertas</h2>
 
-      <Carousel />
-
-      <div style={styles.cardsContainer}>
-        {ofertas.map((oferta) => (
-          <OfertaCard key={oferta.id} oferta={oferta} />
-        ))}
-      </div>
+      {loading ? (
+        <p style={{textAlign: 'center'}}>Cargando ofertas...</p>
+      ) : activePromos.length === 0 ? (
+        <p style={{textAlign: 'center', margin: '40px 0'}}>No hay promociones activas por el momento.</p>
+      ) : (
+        <>
+          <Carousel images={carouselImages} />
+          <div style={styles.cardsContainer}>
+            {activePromos.map((oferta) => (
+              <OfertaCard key={oferta._id} oferta={oferta} />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }

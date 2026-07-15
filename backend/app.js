@@ -12,6 +12,9 @@ import registerAdminRoutes from "./src/routers/registerAdmin.js";
 import registeremployeerRoutes from "./src/routers/registerEmployeer.js";
 import registerCustomerRoutes from "./src/routers/registerCustomer.js";
 import ventaRoutes from "./src/routers/venta.js";
+import reviewRoutes from "./src/routers/review.js";
+import suppliderRoutes from "./src/routers/supplider.js";
+import promocionRoutes from "./src/routers/promocion.js";
 
 // Nuevos Routers añadidos para compatibilidad / nuevas pantallas
 import customersRouter from "./src/routers/customers.js";
@@ -21,7 +24,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "http://localhost:5176"],
     // permitir el envío de cookies y credenciales
     credentials: true,
   }),
@@ -47,5 +50,7 @@ app.use("/api/registerEmployeer", registeremployeerRoutes);
 app.use("/api/registerCustomer", registerCustomerRoutes);
 app.use("/api/venta", ventaRoutes);
 app.use("/api/reviews", reviewsRouter); // Plural
+app.use("/api/supplider", suppliderRoutes);
+app.use("/api/promocion", promocionRoutes);
 
 export default app;

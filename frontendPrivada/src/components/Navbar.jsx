@@ -1,46 +1,41 @@
-import { NavLink } from "react-router-dom";
+import { NavLink } from 'react-router-dom'
 
-const LINKS = [
-  { to: "/", label: "Inicio" },
-  { to: "/productos", label: "Productos" },
-  { to: "/historial", label: "Historial" },
-  { to: "/proveedores", label: "Proveedores" },
-  { to: "/pedidos", label: "Pedidos" },
-];
-
-export default function Navbar() {
+function Navbar() {
   return (
-    <header className="w-full">
-      <div className="bg-black text-white text-xs text-center py-1">
-        Desktop
+    <nav className="navbar">
+      <div className="navbar-brand">
+        <img 
+          src="/logo.png" 
+          alt="Express Spare Parts" 
+          className="navbar-logo"
+          onError={(e) => {
+            e.target.style.display = 'none'
+          }}
+        />
+        <span className="navbar-title">La fuerza detrás de tu motor</span>
       </div>
-      <nav className="bg-[#0b1f4d] text-white flex items-center justify-between px-8 py-3">
-        <div className="flex items-center gap-3">
-          {/* Reemplaza src por el logo real del proyecto */}
-          <img src="/logo.png" alt="Express Spare Parts" className="h-10 w-10 rounded-full bg-white p-1" />
-          <span className="text-sm text-gray-200">
-            La fuerza detrás de tu motor
-          </span>
-        </div>
-        <ul className="flex gap-8 text-sm font-medium">
-          {LINKS.map((link) => (
-            <li key={link.to}>
-              <NavLink
-                to={link.to}
-                className={({ isActive }) =>
-                  `pb-1 border-b-2 transition-colors ${
-                    isActive
-                      ? "border-white"
-                      : "border-transparent hover:border-white/50"
-                  }`
-                }
-              >
-                {link.label}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    </header>
-  );
+      <div className="navbar-links">
+        <NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''}>
+          Inicio
+        </NavLink>
+        <NavLink to="/productos" className={({ isActive }) => isActive ? 'active' : ''}>
+          Productos
+        </NavLink>
+        <NavLink to="/historial" className={({ isActive }) => isActive ? 'active' : ''}>
+          Historial
+        </NavLink>
+        <NavLink to="/proveedores" className={({ isActive }) => isActive ? 'active' : ''}>
+          Proveedores
+        </NavLink>
+        <NavLink to="/pedidos" className={({ isActive }) => isActive ? 'active' : ''}>
+          Pedidos
+        </NavLink>
+        <NavLink to="/promociones" className={({ isActive }) => isActive ? 'active' : ''}>
+          Promociones
+        </NavLink>
+      </div>
+    </nav>
+  )
 }
+
+export default Navbar
