@@ -9,6 +9,7 @@ import Registrarse from './pages/Registrarse'
 import Novedades from './pages/Novedades'
 import Historial from './pages/Historial'
 import SobreNosotros from './pages/sobreNosotros'
+import Login from './pages/Login'
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/registrarse" element={<Registrarse />} />
         <Route path="/novedades" element={<Novedades />} />
         <Route path="/historial" element={<Historial />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
       <Footer />
     </BrowserRouter>
