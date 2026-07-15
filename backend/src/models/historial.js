@@ -31,4 +31,4 @@ const historialSchema = new Schema({
     strict: false
 })
 
-export default model("Historial", historialSchema)
+export default model("Historial", historialSchema, "Historial")
