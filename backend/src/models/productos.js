@@ -30,4 +30,4 @@ const productsSchema = new Schema({
     strict: false
 })
 
-export default model("products", productsSchema)
+export default model("Products", productsSchema, "Products")

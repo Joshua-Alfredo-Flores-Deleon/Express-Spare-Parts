@@ -30,4 +30,4 @@ const adminSchema = new Schema({
     strict: false
 })
 
-export default model("admin", adminSchema)
+export default model("Admin", adminSchema, "Admin")

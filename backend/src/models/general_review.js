@@ -28,4 +28,4 @@ const generalReviewSchema = new Schema({
     strict: false
 })
 
-export default model("General_review", generalReviewSchema)
+export default model("General_review", generalReviewSchema, "General_review")

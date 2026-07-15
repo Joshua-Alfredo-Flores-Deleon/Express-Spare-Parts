@@ -24,4 +24,4 @@ const carShema = new Schema({
     strict: false,
 })
 
-export default model("cart", carShema)
+export default model("Shopping_cart", carShema, "Shopping_cart")

@@ -33,4 +33,4 @@ const employeeSchema = new Schema({
     strict: false
 })
 
-export default model("Employee", employeeSchema)
+export default model("Employees", employeeSchema, "Employees")

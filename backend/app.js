@@ -12,7 +12,6 @@ import registerAdminRoutes from "./src/routers/registerAdmin.js";
 import registeremployeerRoutes from "./src/routers/registerEmployeer.js";
 import registerCustomerRoutes from "./src/routers/registerCustomer.js";
 import ventaRoutes from "./src/routers/venta.js";
-import reviewRoutes from "./src/routers/review.js";
 
 // Nuevos Routers añadidos para compatibilidad / nuevas pantallas
 import customersRouter from "./src/routers/customers.js";
@@ -47,7 +46,6 @@ app.use("/api/registerAdmin", registerAdminRoutes);
 app.use("/api/registerEmployeer", registeremployeerRoutes);
 app.use("/api/registerCustomer", registerCustomerRoutes);
 app.use("/api/venta", ventaRoutes);
-app.use("/api/review", reviewRoutes);
 app.use("/api/reviews", reviewsRouter); // Plural
 
 export default app;
