@@ -6,15 +6,20 @@ historialController.getHistorial = async (req, res) => {
   try {
     const historial = await historialModel
       .find()
-      .populate("id_cliente", "full_name email phone_number")
-      .populate("id_venta")
+      // Forzamos la población indicando explícitamente el modelo 'Ventas'
+      .populate({
+        path: "id_venta",
+        model: "Venta"
+      })
       .sort({ date: -1 });
+ 
     return res.status(200).json(historial);
   } catch (error) {
     console.log("error " + error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+ 
 
 // GET - Historial por cliente
 historialController.getHistorialByCustomer = async (req, res) => {
@@ -40,7 +45,6 @@ historialController.getHistorialById = async (req, res) => {
   try {
     const record = await historialModel
       .findById(req.params.id)
-      .populate("id_cliente", "full_name email phone_number")
       .populate("id_venta");
 
     if (!record) {
@@ -56,20 +60,18 @@ historialController.getHistorialById = async (req, res) => {
 
 historialController.createHistorial = async (req, res) => {
   try {
-    const { id_cliente, id_venta, customerId, ventaId, date, status } = req.body;
+    const { id_cliente, id_venta, date, status } = req.body;
 
-    const cliente = id_cliente || customerId;
-    const venta = id_venta || ventaId;
+    const cliente = id_cliente;
+    const venta = id_venta;
 
     if (!cliente || !venta) {
-      return res.status(400).json({ message: "Fields id_cliente/customerId and id_venta/ventaId are required" });
+      return res.status(400).json({ message: "Fields id_cliente and id_venta are required" });
     }
 
     const newRecord = new historialModel({
       id_cliente: cliente,
       id_venta: venta,
-      customerId: cliente,
-      ventaId: venta,
       date: date || new Date(),
       status: status || "Completado",
     });
@@ -88,12 +90,12 @@ historialController.insertHistorial = historialController.createHistorial;
 // PUT - Actualizar estado del historial
 historialController.updateHistorial = async (req, res) => {
   try {
-    const { status, customerId, ventaId, date } = req.body;
+    const { status, id_cliente, id_venta, date } = req.body;
 
     const updateData = {};
     if (status) updateData.status = status;
-    if (customerId) updateData.customerId = customerId;
-    if (ventaId) updateData.ventaId = ventaId;
+    if (id_cliente) updateData.id_cliente = id_cliente;
+    if (id_venta) updateData.id_venta = id_venta;
     if (date) updateData.date = date;
 
     const recordUpdated = await historialModel.findByIdAndUpdate(

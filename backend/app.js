@@ -49,7 +49,6 @@ app.use("/api/registerAdmin", registerAdminRoutes);
 app.use("/api/registerEmployeer", registeremployeerRoutes);
 app.use("/api/registerCustomer", registerCustomerRoutes);
 app.use("/api/venta", ventaRoutes);
-app.use("/api/review", reviewRoutes);
 app.use("/api/reviews", reviewsRouter); // Plural
 app.use("/api/supplider", suppliderRoutes);
 app.use("/api/promocion", promocionRoutes);

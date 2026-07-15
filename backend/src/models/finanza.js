@@ -9,4 +9,4 @@ const finanzaSchema = new Schema({
     strict: false
 })
 
-export default model ("Finanzas", finanzaSchema)
+export default model ("Finance", finanzaSchema, "Finance")
